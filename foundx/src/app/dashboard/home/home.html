@@ -1,0 +1,248 @@
+<br>
+<br><br>
+<div class="p-6 sm:ml-64 bg-gray-50 min-h-screen">
+   <!-- Header -->
+   <div class="flex justify-between items-center bg-white shadow rounded-xl p-6 mb-6">
+      <div>
+         <h1 class="text-3xl font-bold text-gray-900">Bienvenue, <span class="text-blue-600">{{ user.name }}</span> 👋
+         </h1>
+         <p class="text-gray-500">Rôle : <b class="capitalize">{{ user.role }}</b></p>
+      </div>
+      <!-- Actions selon le rôle -->
+      <div class="space-x-3">
+         <button *ngIf="user.role === 'retrouveur'" (click)="openModal('post')"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
+            + Create Post
+         </button>
+         <button *ngIf="user.role === 'proprietaire'" (click)="openModal('search')"
+            class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
+            🔍 Search
+         </button>
+      </div>
+   </div>
+
+   <!-- Modal Post -->
+   <div *ngIf="isModalPostOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-100">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
+         <!-- Header -->
+         <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Create Post</h2>
+            <button (click)="closeModal('post')"
+               class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">&times;</button>
+         </div>
+
+         <!-- Form -->
+         <form (ngSubmit)="createPost()">
+            <!-- Type -->
+            <div class="mb-4">
+               <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
+               <input id="type" type="text" name="type" [(ngModel)]="modalPost.type"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+            </div>
+
+            <!-- Lieu -->
+            <div class="mb-4">
+               <label for="lieu" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lieu</label>
+               <input id="lieu" type="text" [(ngModel)]="modalPost.lieu" name="lieu"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+            </div>
+
+            <!-- Date -->
+            <div class="mb-4">
+               <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
+               <input id="date" type="date" [(ngModel)]="modalPost.date" name="date"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+            </div>
+
+            <!-- Category -->
+            <div class="mb-4">
+               <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+               <select id="category" [(ngModel)]="modalPost.category" name="category"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  <option *ngFor="let cat of global.categories" [value]="cat">{{ cat }}</option>
+               </select>
+            </div>
+
+
+            <!-- Description -->
+            <div class="mb-4">
+               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+
+               <div *ngFor="let word of modalPost.description; let i = index; trackBy: trackByIndex"
+                  class="flex items-center mb-2">
+                  <input type="text" (keydown.space)="$event.preventDefault()" [(ngModel)]="modalPost.description[i]"
+                     name="description{{i}}"
+                     class="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                     placeholder="Entrez un mot" />
+                  <button type="button" (click)="removeWord(i)" class="ml-2 text-red-500 font-bold">&times;</button>
+               </div>
+
+
+               <button type="button" (click)="addWord()"
+                  class="mt-2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                  + Ajouter un mot
+               </button>
+            </div>
+
+
+            <!-- Image -->
+            <div class="mb-4">
+               <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Image</label>
+               <input id="image" accept=".jpg,.jpeg,.png" type="file" (change)="onFileSelected($event)" name="image"
+                  class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400" />
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end space-x-2 mt-6">
+               <button type="button" (click)="cancelModal('post')"
+                  class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500">
+                  Cancel
+               </button>
+               <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+                  Create
+               </button>
+            </div>
+         </form>
+      </div>
+   </div>
+
+   <!-- Modal Search -->
+   <div *ngIf="isModalSearchOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-100">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
+         <!-- Header -->
+         <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Search</h2>
+            <button (click)="closeModal('search')"
+               class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">&times;</button>
+         </div>
+
+         <!-- Form -->
+         <form (ngSubmit)="search()">
+            <!-- Type -->
+            <div class="mb-4">
+               <label for="keyword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">keyword</label>
+               <input id="keyword" type="text" name="type" [(ngModel)]="match.keyword"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+            </div>
+
+            <!-- Lieu -->
+            <div class="mb-4">
+               <label for="lieu" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lieu</label>
+               <input id="lieu" type="text" [(ngModel)]="match.lieu" name="lieu"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+            </div>
+
+            <!-- Date -->
+            <div class="mb-4">
+               <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
+               <input id="date" type="date" [(ngModel)]="match.date" name="date"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+            </div>
+
+            <!-- Category -->
+            <div class="mb-4">
+               <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+               <select id="category" [(ngModel)]="match.category" name="category"
+                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                  <option *ngFor="let cat of global.categories" [value]="cat">{{ cat }}</option>
+               </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end space-x-2 mt-6">
+               <button type="button" (click)="cancelModal('search')"
+                  class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500">
+                  Cancel
+               </button>
+               <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+                  Search
+               </button>
+            </div>
+         </form>
+      </div>
+   </div>
+
+
+
+   <!-- Section Stats -->
+   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+         <p class="text-gray-500">Total Posts</p>
+         <h2 class="text-2xl font-bold">{{ post.length }}</h2>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+         <p class="text-gray-500">Total Matchs</p>
+         <h2 class="text-2xl font-bold">{{ matchs.length }}</h2>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
+         <p class="text-gray-500">Last Active</p>
+         <h2 class="text-2xl font-bold">'N/A'</h2>
+      </div>
+   </div>
+
+   <!-- Section Contenu Dynamique -->
+   <div *ngIf="user.role == 'retrouveur'">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">📌 Mes Annonces</h2>
+
+      <div *ngIf="post.length === 0" class="text-gray-500">Aucune annonce publiée.</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+         <div *ngFor="let p of post">
+            <a [routerLink]="['/match', p.postId]"
+               class="flex flex-col items-center w-full h-full bg-white rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+
+               <!-- Image responsive -->
+               <img class="object-cover w-full max-h-60 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg rounded-t-lg"
+                  [src]="p.imageBase64" alt="Post image">
+
+               <div
+                  class="flex flex-col justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md leading-relaxed w-full">
+                  <p class="mb-2 text-gray-800 dark:text-gray-200">
+                     <span class="font-semibold text-blue-600">Type :</span> {{p.type}}
+                  </p>
+                  <p class="mb-2 text-gray-800 dark:text-gray-200">
+                     <span class="font-semibold text-blue-600">Description :</span> {{p.description}}
+                  </p>
+                  <p class="mb-2 text-gray-800 dark:text-gray-200">
+                     <span class="font-semibold text-blue-600">Date :</span> {{p.date}}
+                  </p>
+                  <p class="mb-2 text-gray-800 dark:text-gray-200">
+                     <span class="font-semibold text-blue-600">Lieu :</span> {{p.lieu}}
+                  </p>
+                  <p class="mb-2 text-gray-800 dark:text-gray-200">
+                     <span class="font-semibold text-blue-600">Catégorie :</span> {{p.category}}
+                  </p>
+               </div>
+
+            </a>
+         </div>
+      </div>
+
+   </div>
+
+   <div *ngIf="user.role == 'proprietaire'">
+      <h2 class="text-xl font-semibold text-gray-900 mb-4">🔎 Mes Matchs</h2>
+
+      <div *ngIf="matchs.length === 0" class="text-gray-500">Aucun match trouvé.</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+         <div *ngFor="let m of matchs" [routerLink]="['/annoncematching', m.id]" class="bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition p-6 flex">
+            <div class="flex-1 pr-4">
+               <!-- Header du match -->
+               <div class="mb-4">
+                  <h3 class="text-lg font-semibold text-white">🎯 Match trouvé</h3>
+                  <p class="text-xs text-gray-400">Créé le {{ m.createdAt }}</p>
+                  <p class="text-xs text-gray-400">Dernière mise à jour : {{ m.lastMatchDate }}</p>
+               </div>
+
+               <div class="space-y-2 text-sm text-gray-300">
+                  <p><span class="font-semibold">📌 Catégorie:</span> {{ m.category }}</p>
+                  <p><span class="font-semibold">📍 Lieu:</span> {{ m.lieu }}</p>
+                  <p><span class="font-semibold">📅 Date:</span> {{ m.date }}</p>
+                  <p><span class="font-semibold">🔑 Mot recherché:</span> {{ m.keyword }}</p>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>

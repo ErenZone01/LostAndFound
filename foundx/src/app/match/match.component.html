@@ -1,0 +1,88 @@
+<div class="p-4 sm:ml-64">
+   <!-- Section erreur -->
+   <div *ngIf="error" class="max-w-4xl mx-auto mt-10 p-6 border-2 border-red-500 border-dashed rounded-xl bg-red-50">
+      <h1 class="text-red-700 text-center text-lg font-medium">
+         Une erreur est survenue. Veuillez réessayer plus tard.
+      </h1>
+   </div>
+
+   <!-- Titre principal -->
+   <div
+      class="max-w-4xl mx-auto mt-10 p-6 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg text-white text-center">
+      <h1 class="text-5xl font-extrabold tracking-tight">
+         Mes Matchs
+      </h1>
+      <p class="mt-2 text-lg opacity-80">
+         Retrouvez tous vos matchs et les détails des utilisateurs associés
+      </p>
+   </div>
+
+   <!-- Sous-titre pour liste -->
+   <div class="max-w-4xl mx-auto mt-8 p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+      <h2 class="text-2xl font-semibold mb-2">Liste de mes matchs :</h2>
+      <div *ngIf="matchs.length == 0 || matchs == null" class="text-center text-gray-500">
+         <b>Aucun match enregistré</b>
+      </div>
+   </div>
+
+   <br>
+   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let m of matchs; let i = index">
+         <div class="bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition p-6 flex">
+            <!-- Détails du match -->
+            <div class="flex-1 pr-4">
+               <!-- Header du match -->
+               <div class="mb-4">
+                  <h3 class="text-lg font-semibold text-white">🎯 Match trouvé</h3>
+                  <p class="text-xs text-gray-400">Créé le {{ m.createdAt }}</p>
+                  <p class="text-xs text-gray-400">Dernière mise à jour : {{ m.lastMatchDate }}</p>
+               </div>
+
+               <div class="space-y-2 text-sm text-gray-300">
+                  <p><span class="font-semibold">📌 Catégorie:</span> {{ m.category }}</p>
+                  <p><span class="font-semibold">📍 Lieu:</span> {{ m.lieu }}</p>
+                  <p><span class="font-semibold">📅 Date:</span> {{ m.date }}</p>
+                  <p><span class="font-semibold">🔑 Mot recherché:</span> {{ m.keyword }}</p>
+               </div>
+            </div>
+
+            <!-- Ligne verticale de séparation -->
+            <div class="w-px bg-gray-700 mx-4"></div>
+
+            <!-- Profil User -->
+            <div class="w-48 flex-shrink-0 bg-gray-800 rounded-xl p-4 text-center">
+               <div class="flex justify-center">
+                  <div
+                     class="w-24 h-24 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold shadow-md">
+                     {{ user[i]?.name | slice:0:2 | uppercase }}
+                  </div>
+               </div>
+
+               <h2 class="mt-4 text-lg font-semibold text-white">{{ user[i]?.name }}</h2>
+               <p class="text-gray-400 text-sm">{{ user[i]?.email }}</p>
+               <span class="mt-3 inline-block px-3 py-1 text-sm rounded-full bg-indigo-100 text-indigo-600 font-medium">
+                  {{ user[i]?.role }}
+               </span>
+            </div>
+         </div><!-- Boutons validation / chat -->
+          <div *ngFor="let l of m.etat"  class="mt-4 flex space-x-2">
+            <button *ngIf="l.state == false && l.postId == annonceId" (click)="validateMatch(i, m.id)"
+               class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+               Valider
+            </button>
+
+            <button *ngIf="l.state == true && l.postId == annonceId" (click)="cancelMatch(i, m.id)"
+               class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+               Annuler
+            </button>
+
+            <button *ngIf="l.state == true && l.postId == annonceId" (click)="openChat(i)"
+               class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+               Chat
+            </button>
+         </div>
+      </div>
+
+
+   </div>
+</div>

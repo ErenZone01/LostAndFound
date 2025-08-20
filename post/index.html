@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Créer un post avec authentification</title>
+</head>
+
+<body>
+  <h2>Créer un post</h2>
+  <form id="postForm" enctype="multipart/form-data">
+    <label for="type">Type :</label>
+    <input type="text" id="type" name="type" /><br /><br />
+
+    <label for="lieu">Lieu :</label>
+    <input type="text" id="lieu" name="lieu" /><br /><br />
+
+    <label for="date">Date :</label>
+    <input type="date" id="date" name="date" /><br /><br />
+
+    <label for="description">Description :</label><br />
+    <textarea id="description" name="description"></textarea><br /><br />
+
+    <label for="category">Catégorie :</label>
+    <select id="category" name="category">
+      <option value="electronics">Électronique</option>
+      <option value="clothing">Vêtements</option>
+      <option value="general">Général</option>
+    </select><br /><br />
+
+    <label for="image">Image :</label>
+    <input type="file" id="image" name="image" accept="image/*" /><br /><br />
+    <input type="button" value="UpdatePost" onclick="UpdatePost('69b2039b-b6b1-40d3-a21b-0deb5033dcef')"><br /><br />
+    <input type="button" value="DeletePost" onclick="deletePost('69b2039b-b6b1-40d3-a21b-0deb5033dcef')"><br /><br />
+    <button type="submit">Envoyer</button>
+
+  </form>
+
+  // Afficher la liste des posts
+  <h2>Liste des posts</h2>
+  <div id="postsList"></div>
+
+  </div>
+
+  <script>
+    const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2ODljMTI3ZjgyMWNjNjEyYzk2OGJhODgiLCJyb2xlIjoiUkVUUk9VVkVVUiIsImlhdCI6MTc1NTE1OTAwOCwiZXhwIjoxNzU1MjQ1NDA4fQ.ViX1tYt4Fq3SgRO-veN4nToAOV8iUxdbYOd-Qo7kRO0";
+    const userId = "0fa9db38-f785-4660-856e-cf3da48b3562"; // adapte avec le bon userId
+
+    deletePost = async (postId) => {
+      // Supprimer un post
+      try {
+        const response = await fetch(`http://localhost:8080/post/api/delete/${postId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + token
+          },
+        });
+
+        if (response.ok) {
+          console.log('Post supprimé avec succès !');
+          // Rafraîchir la liste des posts
+        } else {
+          const error = await response.json();
+          console.log('Erreur : ' + (error.message || 'Erreur lors de la suppression du post'));
+        }
+      } catch (err) {
+        console.log('Erreur réseau ou serveur : ' + err.message);
+      }
+    }
+
+
+    document.getElementById('postForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const imageFile = document.getElementById('image').files[0];
+      const postObject = {
+        type: 'Portefeuille',
+        lieu: 'dakar',
+        date: '2020-01-01',
+        imageId: '',  // sera rempli par le backend
+        description: ["noir", "cuivre", "portefeuille", "grand"],  // Liste de mots sans espaces
+        category: 'VETEMENTS'  // Utiliser l'énumération Category
+      };
+
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      formData.append("post", new Blob([JSON.stringify(postObject)], { type: "application/json" }));  // IMPORTANT : JSON string dans une part "post"
+
+      try {
+        const response = await fetch(`http://localhost:8080/post/api/create/${userId}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + token
+          },
+          body: formData
+        });
+
+        if (response.ok) {
+          console.log("la response : " + await response.text());
+          console.log('Post créé avec succès !');
+        } else {
+          const error = await response.json();
+          console.log('Erreur : ' + (error.message || 'Erreur lors de la création du post'));
+        }
+      } catch (err) {
+        console.log('Erreur réseau ou serveur : ' + err.message);
+      }
+    });
+
+
+    function UpdatePost(postId) {
+      const imageFile = document.getElementById('image').files[0];
+      // Mettre à jour un post
+      const updatedPost = {
+        type: 'lieu',
+        lieu: 'Lyon',
+        imageId: '689c12c8a2a05e67638305ca',  // sera rempli par le backend
+        date: '2025-08-11',
+        description: ["Ceci", "est", "une", "description", "mise", "à", "jour"],
+        category: 'cuisine'
+      };
+
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      formData.append("post", new Blob([JSON.stringify(updatedPost)], { type: "application/json" }));  // IMPORTANT : JSON string dans une part "post"
+
+      fetch(`http://localhost:8080/post/api/update/${postId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        },
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Post mis à jour avec succès !', data);
+          // Rafraîchir la liste des posts
+        })
+        .catch(error => console.error('Erreur lors de la mise à jour du post :', error));
+    }
+
+  </script>
+</body>
+
+</html>

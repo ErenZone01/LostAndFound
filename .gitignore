@@ -1,0 +1,10 @@
+foundx/node_modules
+foundx/.vscode
+.angular/
+match/target
+eureka/target
+api/target
+auth/target
+notification/target
+user/target
+post/target

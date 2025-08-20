@@ -1,0 +1,57 @@
+<div class="p-6 sm:ml-64 bg-gray-50 min-h-screen">
+  <br>
+  <br>
+  <br>
+  <h2 class="text-xl font-semibold text-gray-900 mb-4">📌 Mes Annonces : </h2>
+  <div *ngIf="posts.length === 0" class="text-gray-500">Aucune annonce publiée.</div>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let p of posts">
+      <div>
+        <a
+          class="flex flex-col items-center w-full h-full bg-white rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+
+          <!-- Image responsive -->
+          <img src="/cacher.png"
+            class="object-cover w-full max-h-60 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg rounded-t-lg"
+            alt="Post image">
+
+          <div
+            class="flex flex-col justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md leading-relaxed w-full">
+            <p class="mb-2 text-gray-800 dark:text-gray-200">
+              <span class="font-semibold text-blue-600">Type :</span> {{p.type}}
+            </p>
+            <p class="mb-2 text-gray-800 dark:text-gray-200">
+              <span class="font-semibold text-blue-600">Description :</span> {{p.description}}
+            </p>
+            <p class="mb-2 text-gray-800 dark:text-gray-200">
+              <span class="font-semibold text-blue-600">Date :</span> {{p.date}}
+            </p>
+            <p class="mb-2 text-gray-800 dark:text-gray-200">
+              <span class="font-semibold text-blue-600">Lieu :</span> {{p.lieu}}
+            </p>
+            <p class="mb-2 text-gray-800 dark:text-gray-200">
+              <span class="font-semibold text-blue-600">Catégorie :</span> {{p.category}}
+            </p>
+          </div>
+
+        </a>
+      </div>
+      <div *ngFor="let l of match.etat" class="mt-4 flex space-x-2 block">
+        <span *ngIf="l.state == false && l.postId == p.postId" disabled
+          class="text-center flex-1 bg-gray-600  text-white font-semibold py-2 px-4 rounded-lg transition">
+          En attente
+        </span>
+
+        <button *ngIf="l.state == true && l.postId == p.postId"
+          class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+          Annuler
+        </button>
+
+        <button *ngIf="l.state == true && l.postId == p.postId"
+          class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+          Chat
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
