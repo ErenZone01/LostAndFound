@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Test WebSocket Notifications</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- SockJS + STOMP -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/umd/stomp.umd.min.js"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            padding: 16px;
+        }
+
+        .row {
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 6px 8px;
+            width: 320px;
+        }
+
+        button {
+            padding: 6px 10px;
+            margin-right: 6px;
+            cursor: pointer;
+        }
+
+        #status {
+            font-weight: 600;
+        }
+
+        #log {
+            white-space: pre-wrap;
+            border: 1px solid #ddd;
+            padding: 10px;
+            height: 260px;
+            overflow: auto;
+        }
+
+        .ok {
+            color: #2e7d32;
+        }
+
+        .bad {
+            color: #c62828;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Test WebSocket Notifications</h1>
+
+    <div class="row">
+        <label>URL du service WebSocket :</label><br />
+        <input id="wsUrl" value="http://localhost:8085/ws-notifications" />
+        <small>← remplace 808X par le port de ton microservice Notification</small>
+    </div>
+
+    <div class="row">
+        <label>User ID destinataire (pour le topic) :</label><br />
+        <input id="userId" placeholder="ex: 0fa9db38-..." />
+    </div>
+
+    <div class="row">
+        <button id="btnConnect">Connecter</button>
+        <button id="btnSubscribe" disabled>S’abonner</button>
+        <button id="btnDisconnect" disabled>Déconnecter</button>
+        <span id="status">Déconnecté</span>
+    </div>
+
+    <div id="log" aria-live="polite"></div>
+
+    <script>
+        const $ = (id) => document.getElementById(id);
+        let client = null;
+        let subscription = null;
+
+        function log(msg, ok) {
+            const line = `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+            const logEl = $('log');
+            const span = document.createElement('span');
+            span.className = ok === true ? 'ok' : ok === false ? 'bad' : '';
+            span.textContent = line;
+            logEl.appendChild(span);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function setStatus(text, good) {
+            const st = $('status');
+            st.textContent = text;
+            st.className = good ? 'ok' : 'bad';
+        }
+
+        $('btnConnect').onclick = () => {
+            const url = $('wsUrl').value.trim();
+            if (!url) return alert('Renseigne l’URL du WebSocket');
+
+            // SockJS + STOMP client
+            client = new StompJs.Client({
+                debug: (str) => log(str),
+                reconnectDelay: 3000,
+                webSocketFactory: () => new SockJS(url),
+                // connectHeaders: { Authorization: 'Bearer <ton_jwt_si_besoin>' },
+            });
+
+            client.onConnect = () => {
+                setStatus('Connecté', true);
+                $('btnConnect').disabled = true;
+                $('btnSubscribe').disabled = false;
+                $('btnDisconnect').disabled = false;
+                log('Connexion STOMP établie ✅', true);
+            };
+
+            client.onStompError = (frame) => {
+                log('Erreur STOMP : ' + frame.headers['message'], false);
+                if (frame.body) log('Détails: ' + frame.body, false);
+            };
+
+            client.onWebSocketError = (evt) => {
+                log('Erreur WebSocket: ' + (evt?.message || evt), false);
+            };
+
+            client.onDisconnect = () => {
+                setStatus('Déconnecté', false);
+                $('btnConnect').disabled = false;
+                $('btnSubscribe').disabled = true;
+                $('btnDisconnect').disabled = true;
+                log('Déconnecté ❌', false);
+            };
+
+            setStatus('Connexion...', true);
+            client.activate();
+        };
+
+        $('btnSubscribe').onclick = () => {
+            if (!client || !client.connected) return alert('Pas connecté.');
+            const userId = $('userId').value.trim();
+            if (!userId) return alert('Saisis un userId');
+
+            const dest = `/topic/notifications/${userId}`;
+            if (subscription) {
+                subscription.unsubscribe();
+                subscription = null;
+            }
+
+            subscription = client.subscribe(dest, (message) => {
+                try {
+                    const body = JSON.parse(message.body);
+                    log('Notif reçue → ' + JSON.stringify(body, null, 2), true);
+                } catch (e) {
+                    log('Message reçu (non JSON) → ' + message.body, true);
+                }
+            });
+
+            log('Abonné au topic: ' + dest, true);
+        };
+
+        $('btnDisconnect').onclick = () => {
+            try {
+                if (subscription) {
+                    subscription.unsubscribe();
+                    subscription = null;
+                }
+                if (client) client.deactivate();
+            } catch (_) { }
+        };
+    </script>
+</body>
+
+</html>
