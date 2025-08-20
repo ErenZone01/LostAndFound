@@ -1,12 +1,18 @@
+# Clone le Projet
+    bash`git clone https://github.com/ErenZone01/LostAndFound.git`
+
 # Lancer Kafka 
-- lancer kafka a sa racine
+- lancer kafka a la racine du projet
 `docker compose up -d`
 
 # Lancer les microservices
-- dans chaque repertoire lancer le service a sa racine
-    bash`mvn spring-boot:run`
+- dans chaque répertoire lancer le service a sa racine, exemple :
+    bash`cd eureka && mvn spring-boot:run`
 
 # lancer le front
-- entrer dans le front et lance le serveur
+- aller à la racine de foundx et installer les dependences:
     bash
-    ` cd foundx && ng serve`
+        `cd foundx && npm install`
+- Lancer le projet :
+    bash
+    `ng serve`
