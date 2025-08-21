@@ -84,14 +84,12 @@ export class Home {
     this.postService.CreatePost(formData).subscribe({
       next: (res) => {
         console.log(res);
-        this.getAllPost();
       },
       error: (err) => {
         console.log(err);
       }
     })
-
-
+    this.getAllPost();
     console.log('Post to create:', this.modalPost);
     this.closeModal('post');
   }
@@ -100,13 +98,13 @@ export class Home {
     this.matchService.search(this.match).subscribe({
       next: (res) => {
         console.log(res);
-        this.getMatchs();
       },
       error: (err) => {
         console.log(err);
-
+        
       }
     })
+    this.getMatchs();
     console.log('Post to create:', this.modalPost);
     this.closeModal('search');
   }

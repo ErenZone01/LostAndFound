@@ -77,6 +77,8 @@ export class ProfileComponent implements OnInit {
         this.email = res.email;
         this.name = res.name;
         this.role = res.role;
+        console.log(res);
+        
       },
       error: (err) => {
         console.log(err);

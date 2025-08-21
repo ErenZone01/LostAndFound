@@ -118,7 +118,7 @@ export class MatchComponent implements OnInit {
         console.log(err);
 
       }
-    })
+    }) 
   }
 
 

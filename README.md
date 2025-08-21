@@ -2,11 +2,20 @@
     bash`git clone https://github.com/ErenZone01/LostAndFound.git`
 
 # Lancer Kafka 
-- lancer kafka a la racine du projet
+- lancer kafka a la racine du projet avec les droits d'administrateur
 `docker compose up -d`
 
 # Lancer les microservices
-- dans chaque répertoire lancer le service a sa racine, exemple :
+- dans chaque répertoire lancer le microservice a sa racine danse l'ordre, exemple :
+    -eureka
+    -api
+    -auth
+    -user
+    -post
+    -match
+    -notification
+    -foundx
+
     bash`cd eureka && mvn spring-boot:run`
 
 # lancer le front
