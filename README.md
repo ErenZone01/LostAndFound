@@ -26,6 +26,7 @@
 - aller à la racine de foundx et installer les dependences:
     bash
         `cd foundx && npm install`
+        `npm install @stomp/stompjs @stomp/ng2-stompjs --save`
 - Lancer le projet :
     bash
     `ng serve`
