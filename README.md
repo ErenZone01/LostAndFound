@@ -18,7 +18,7 @@
     -post
     -match
     -notification
-    -foundx
+    -chat
 
     bash`cd eureka && mvn spring-boot:run`
 
