@@ -1,7 +1,5 @@
 package com.service_notification.notification.models;
 
-import java.time.LocalDateTime;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -21,14 +19,12 @@ public class Notification {
     @Id
     private String id;
 
-    @Field("userId")
-    private String userId; // destinataire
+    @Field("receiverId")
+    private String receiverId; // destinataire
     @Field("senderId")
     private String senderId; // celui qui a créé le post / match
     @Field("message")
     private String message;
     @Field("read")
     private boolean read;
-    @Field("timestamp")
-    private LocalDateTime timestamp;
 }

@@ -87,26 +87,24 @@ export class Home {
       },
       error: (err) => {
         console.log(err);
+        this.getAllPost();
+        console.log('Post to create:', this.modalPost);
+        this.closeModal('post');
       }
     })
-    this.getAllPost();
-    console.log('Post to create:', this.modalPost);
-    this.closeModal('post');
   }
 
   search() {
     this.matchService.search(this.match).subscribe({
       next: (res) => {
         console.log(res);
+        this.getMatchs();
+        this.closeModal('search');
       },
       error: (err) => {
         console.log(err);
-        
       }
     })
-    this.getMatchs();
-    console.log('Post to create:', this.modalPost);
-    this.closeModal('search');
   }
 
   onFileSelected(event: Event) {

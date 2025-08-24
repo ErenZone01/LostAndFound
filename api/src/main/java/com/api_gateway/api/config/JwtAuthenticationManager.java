@@ -26,8 +26,7 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
             String userId = claims.getSubject().toString();
             String role = claims.get("role", String.class);
 
-            System.out.println("userId: " + userId);
-            System.out.println("role: " + role);
+            
 
             if (userId == null || role == null) {
                 return Mono.error(new BadCredentialsException("Invalid JWT Token"));

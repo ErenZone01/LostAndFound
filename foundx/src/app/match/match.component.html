@@ -1,88 +1,202 @@
-<div class="p-4 sm:ml-64">
-   <!-- Section erreur -->
-   <div *ngIf="error" class="max-w-4xl mx-auto mt-10 p-6 border-2 border-red-500 border-dashed rounded-xl bg-red-50">
-      <h1 class="text-red-700 text-center text-lg font-medium">
-         Une erreur est survenue. Veuillez réessayer plus tard.
-      </h1>
-   </div>
-
-   <!-- Titre principal -->
-   <div
-      class="max-w-4xl mx-auto mt-10 p-6 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg text-white text-center">
-      <h1 class="text-5xl font-extrabold tracking-tight">
-         Mes Matchs
-      </h1>
-      <p class="mt-2 text-lg opacity-80">
-         Retrouvez tous vos matchs et les détails des utilisateurs associés
-      </p>
-   </div>
-
-   <!-- Sous-titre pour liste -->
-   <div class="max-w-4xl mx-auto mt-8 p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-      <h2 class="text-2xl font-semibold mb-2">Liste de mes matchs :</h2>
-      <div *ngIf="matchs.length == 0 || matchs == null" class="text-center text-gray-500">
-         <b>Aucun match enregistré</b>
+<div class="p-4 sm:p-6 sm:ml-64 min-h-screen ">
+  <div class="pt-16 md:pt-20">
+    <!-- Section erreur -->
+    <div *ngIf="error" class="max-w-6xl mx-auto mb-6 p-4 border-l-4 border-red-500 rounded-lg bg-red-50 shadow-sm">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+              clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-red-800 font-medium">Une erreur est survenue</h3>
+          <p class="text-red-700 text-sm mt-1">Veuillez réessayer plus tard.</p>
+        </div>
       </div>
-   </div>
+    </div>
 
-   <br>
-   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div *ngFor="let m of matchs; let i = index">
-         <div class="bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition p-6 flex">
+    <!-- En-tête principal -->
+    <div class="max-w-6xl mx-auto mb-8">
+      <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl shadow-lg overflow-hidden">
+        <div class="p-8 text-center">
+          <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+            Mes Matchs
+          </h1>
+          <p class="text-lg text-indigo-100 max-w-2xl mx-auto">
+            Retrouvez tous vos matchs et connectez-vous avec les personnes qui ont trouvé vos objets perdus
+          </p>
+          <div class="mt-6 flex justify-center">
+            <div
+              class="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm text-white inline-flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <span>{{ matchs.length }} match(s) trouvé(s)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des matchs -->
+    <div class="max-w-6xl mx-auto">
+      <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          Liste de mes matchs
+        </h2>
+        <p class="text-gray-600 mt-1">Gérez vos correspondances et entrez en contact</p>
+      </div>
+
+      <div *ngIf="matchs.length == 0 || matchs == null" class="bg-white rounded-2xl shadow-sm p-8 text-center">
+        <div class="max-w-md mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 class="mt-4 text-lg font-medium text-gray-900">Aucun match enregistré</h3>
+          <p class="mt-2 text-gray-500">Vous n'avez pas encore de correspondances. Elles apparaîtront ici une fois
+            disponibles.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <div *ngFor="let m of matchs; let i = index"
+          class="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+          <!-- Carte de match -->
+          <div class="p-6">
+            <!-- En-tête du match -->
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <div class="flex items-center">
+                  <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Match
+                    trouvé</span>
+                  <span class="ml-2 text-xs text-gray-500">Créé le {{ m.createdAt | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Dernière mise à jour : {{ m.lastMatchDate | date:'dd/MM/yyyy' }}
+                </p>
+              </div>
+              <span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                {{ m.category }}
+              </span>
+            </div>
+
             <!-- Détails du match -->
-            <div class="flex-1 pr-4">
-               <!-- Header du match -->
-               <div class="mb-4">
-                  <h3 class="text-lg font-semibold text-white">🎯 Match trouvé</h3>
-                  <p class="text-xs text-gray-400">Créé le {{ m.createdAt }}</p>
-                  <p class="text-xs text-gray-400">Dernière mise à jour : {{ m.lastMatchDate }}</p>
-               </div>
-
-               <div class="space-y-2 text-sm text-gray-300">
-                  <p><span class="font-semibold">📌 Catégorie:</span> {{ m.category }}</p>
-                  <p><span class="font-semibold">📍 Lieu:</span> {{ m.lieu }}</p>
-                  <p><span class="font-semibold">📅 Date:</span> {{ m.date }}</p>
-                  <p><span class="font-semibold">🔑 Mot recherché:</span> {{ m.keyword }}</p>
-               </div>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="flex items-center text-sm text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-500" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {{ m.lieu }}
+              </div>
+              <div class="flex items-center text-sm text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-500" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                {{ m.date | date:'dd/MM/yyyy' }}
+              </div>
             </div>
 
-            <!-- Ligne verticale de séparation -->
-            <div class="w-px bg-gray-700 mx-4"></div>
-
-            <!-- Profil User -->
-            <div class="w-48 flex-shrink-0 bg-gray-800 rounded-xl p-4 text-center">
-               <div class="flex justify-center">
-                  <div
-                     class="w-24 h-24 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold shadow-md">
-                     {{ user[i]?.name | slice:0:2 | uppercase }}
-                  </div>
-               </div>
-
-               <h2 class="mt-4 text-lg font-semibold text-white">{{ user[i]?.name }}</h2>
-               <p class="text-gray-400 text-sm">{{ user[i]?.email }}</p>
-               <span class="mt-3 inline-block px-3 py-1 text-sm rounded-full bg-indigo-100 text-indigo-600 font-medium">
-                  {{ user[i]?.role }}
-               </span>
+            <div class="mb-6">
+              <p class="text-sm text-gray-600 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-500" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="font-medium">Mot recherché:</span>
+                <span class="ml-1 bg-gray-100 px-2 py-1 rounded-md">{{ m.keyword }}</span>
+              </p>
             </div>
-         </div><!-- Boutons validation / chat -->
-          <div *ngFor="let l of m.etat"  class="mt-4 flex space-x-2">
-            <button *ngIf="l.state == false && l.postId == annonceId" (click)="validateMatch(i, m.id)"
-               class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-               Valider
-            </button>
 
-            <button *ngIf="l.state == true && l.postId == annonceId" (click)="cancelMatch(i, m.id)"
-               class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-               Annuler
-            </button>
+            <!-- Séparateur -->
+            <div class="border-t border-gray-200 my-6"></div>
 
-            <button *ngIf="l.state == true && l.postId == annonceId" (click)="openChat(i)"
-               class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-               Chat
-            </button>
-         </div>
+            <!-- Profil utilisateur -->
+            <div class="flex items-center">
+              <div class="relative mr-4">
+                <div
+                  class="w-14 h-14 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center text-white text-lg font-bold shadow-md">
+                  {{ getMatchUser(m)?.name?.charAt(0) | uppercase }}
+                </div>
+                <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-semibold text-gray-900">{{ getMatchUser(m)?.name }}</h3>
+                <p class="text-sm text-gray-500">{{ getMatchUser(m)?.email }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div *ngFor="let l of m.etat" class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+            <div class="flex space-x-3">
+              <button *ngIf="l.state == false && l.postId == annonceId && !m.active" (click)="validateMatch(i, m.id)"
+                class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Valider
+              </button>
+
+              <button *ngIf="l.state == true && l.postId == annonceId && !m.active" (click)="cancelMatch(i, m.id)"
+                class="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Annuler
+              </button>
+
+              <button *ngIf="l.state == true && l.postId == annonceId && !m.active"
+                (click)="validateMatchAndPostActive(i, m.id)"
+                class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg transition flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                Valider le transfert
+              </button>
+
+              <span *ngIf="l.state == true && l.postId == annonceId && m.active"
+                class="flex-1 bg-gray-100 text-gray-800 font-medium py-2 px-4 rounded-lg text-center flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Validé
+              </span>
+
+              <button *ngIf="l.state == true && l.postId == annonceId" (click)="OpenChat(m)"
+                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Chat
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-
-
-   </div>
+    </div>
+  </div>
 </div>

@@ -25,6 +25,9 @@ export class MatchServiceService {
     })
   }
 
+ 
+
+
   public getMatchById(matchId: string): Observable<MatchReponse>{
     this.token = localStorage.getItem("token");
     return this.http.get<MatchReponse>(`${this.matchApi}/getMatchById`, {
@@ -53,6 +56,16 @@ export class MatchServiceService {
         Authorization: `Bearer ${this.token}`
       },
       params: { "matchId": matchId, "postId":state.postId, "state":state.state }
+    })
+  }
+
+   public updateMatchAndPostAcitve(matchId: string, state: State): Observable<string> {    
+    this.token = localStorage.getItem("token");
+    return this.http.put<string>(`${this.matchApi}/updateMatchAndPostActive`, {}, {
+      headers: {
+        Authorization: `Bearer ${this.token}`
+      },
+      params: { "matchId": matchId, "postId":state.postId}
     })
   }
 

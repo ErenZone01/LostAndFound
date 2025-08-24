@@ -68,6 +68,11 @@ public class SearchAndFilterController {
         return matchService.changeState(matchId, tmp);
     }
 
+    @PutMapping("updateMatchAndPostActive")
+    public String updateAcitve(@RequestParam(required = true) String matchId, @RequestParam(required = true) String postId){
+        return matchService.changeActive(matchId, postId);
+    }
+
     // Example endpoint:
     @PostMapping("/sort")
     public void filterPosts(@RequestParam(required = false) String keyword,

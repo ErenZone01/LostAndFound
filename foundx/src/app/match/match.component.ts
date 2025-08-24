@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../core/authService/auth.service';
 import { DashboardServiceService } from '../core/dashboard/dashboardService.service';
 import { CommonModule } from '@angular/common';
@@ -10,7 +10,7 @@ import { State } from '../shared/State';
 
 @Component({
   selector: 'app-match',
-  imports: [CommonModule],
+  imports: [CommonModule,],
   templateUrl: './match.component.html',
   styleUrls: ['./match.component.css']
 })
@@ -22,7 +22,13 @@ export class MatchComponent implements OnInit {
   user: UserResponse[] = new Array();
 
 
-  constructor(private route: ActivatedRoute, private matchService: MatchServiceService, private dashboardservice: DashboardServiceService) { }
+  constructor(private router: Router, private route: ActivatedRoute, private matchService: MatchServiceService, private dashboardservice: DashboardServiceService) { }
+
+  public OpenChat(match: MatchReponse) {
+    this.annonceId = this.route.snapshot.paramMap.get('id')!;
+    const receiver = match.userId;
+    this.router.navigate([`/chat/${match.id}/${this.annonceId}/${receiver}`])
+  }
 
   getMatchsFromIdPost(idPost: string) {
     this.matchService.getMatchsFromIdPost(idPost).subscribe({
@@ -38,6 +44,16 @@ export class MatchComponent implements OnInit {
         console.log("une erreur detecté : " + err);
       }
     })
+  }
+
+  getMatchUser(match: MatchReponse): UserResponse | null {
+    let user: UserResponse | null = null;
+    this.user.forEach((u: UserResponse) => {
+      if (u.userId == match.userId) {
+        user = u;
+      }
+    })
+    return user
   }
 
   getUserId(userId: string) {
@@ -100,9 +116,26 @@ export class MatchComponent implements OnInit {
     });
   }
 
-  openChat(index: number) {
-    console.log('Ouvrir chat pour le match', this.matchs[index]);
-    // ici tu peux rediriger vers une page chat ou ouvrir un modal
+
+  validateMatchAndPostActive(index: number, matchId: string) {
+    this.annonceId = this.route.snapshot.paramMap.get('id')!;
+    const etat = this.matchs[index].etat.map(e => {
+      if (e.postId === this.annonceId) {
+        return { ...e, state: true }; // crée un nouvel objet
+      }
+      return e;
+    });
+
+    // Remplace la référence entière de 'etat' pour forcer la détection
+    this.matchs[index] = {
+      ...this.matchs[index],
+      etat: etat
+    };
+
+    this.updateMatchAndPostAcitve(matchId, {
+      postId: this.annonceId,
+      state: true
+    });
   }
 
   updateMatchState(matchId: string, state: State) {
@@ -118,7 +151,23 @@ export class MatchComponent implements OnInit {
         console.log(err);
 
       }
-    }) 
+    })
+  }
+
+  updateMatchAndPostAcitve(matchId: string, state: State) {
+    console.log("confirm Post and Match: ", state.state);
+
+    this.matchService.updateMatchAndPostAcitve(matchId, state).subscribe({
+      next: (res: string) => {
+        this.error = res
+      },
+      error: (err) => {
+        this.annonceId = this.route.snapshot.paramMap.get('id')!;
+        this.getMatchsFromIdPost(this.annonceId);
+        console.log(err);
+
+      }
+    })
   }
 
 

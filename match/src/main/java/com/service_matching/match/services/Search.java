@@ -4,15 +4,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.commons.text.similarity.JaroWinklerSimilarity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,44 +52,50 @@ public class Search {
                 }
             }
         });
-
     }
 
     public Match search(String keyword, Category category, String date,
             String lieu, String userId) {
         List<Post> objects = postRepositories.findAll();
-        int threshold = 50; // pertinence minimale
+        int threshold = 50;
         List<Post> result = objects.stream()
                 .filter(p -> calculateScore(p, keyword, category, date, lieu, userId) >= threshold)
                 .sorted((p1, p2) -> calculateScore(p2, keyword, category, date, lieu, userId)
-                        - calculateScore(p1, keyword, category, date, lieu, userId)) // tri par score
+                        - calculateScore(p1, keyword, category, date, lieu, userId))
                 .collect(Collectors.toList());
 
-        // Vérifier si un match existe déjà avec ces critères
+        List<String> currentPostIds = result.stream()
+                .map(Post::getPostId)
+                .toList();
+
         Optional<Match> existingMatchOpt = matchRepositories.findByKeywordAndCategoryAndDateAndLieuAndUserId(
                 keyword, category.toString(), date, lieu, userId);
 
         Match match;
+        List<String> newPostIds = new ArrayList<>();
+
         if (existingMatchOpt.isPresent()) {
-            // ✅ Déjà existant → on met à jour
             match = existingMatchOpt.get();
-            List<String> postId = result.stream()
-                    .map(Post::getPostId)
-                    .toList();
             List<State> existedState = match.getEtat();
-            postId.forEach(s -> {
-                if (!match.getMatchedPostIds().contains(s)){
-                    State newState = new State();
-                    newState.setPostId(s);
-                    newState.setState(false);
-                    existedState.add(newState);
-                }
+
+            // Détecter les nouveaux postIds
+            newPostIds = currentPostIds.stream()
+                    .filter(p -> !match.getMatchedPostIds().contains(p))
+                    .toList();
+
+            // Ajouter les nouveaux dans état
+            newPostIds.forEach(s -> {
+                State newState = new State();
+                newState.setPostId(s);
+                newState.setState(false);
+                existedState.add(newState);
             });
+
             match.setEtat(existedState);
-            match.setMatchedPostIds(postId);
-            match.setLastMatchDate(LocalDateTime.now()); // exemple de champ update
+            match.setMatchedPostIds(currentPostIds);
+            match.setLastMatchDate(LocalDateTime.now());
+
         } else {
-            // 🆕 Nouveau match
             match = new Match();
             match.setKeyword(keyword);
             match.setCategory(category);
@@ -101,27 +103,27 @@ public class Search {
             match.setLieu(lieu);
             match.setUserId(userId);
             match.setActive(false);
-            // match.setEtat(new ArrayList<>());
 
-            List<String> postId = result.stream()
-                    .map(Post::getPostId)
-                    .toList();
-
-            List<State> existedState = new ArrayList<>();
-            postId.forEach(s -> {
+            List<State> states = new ArrayList<>();
+            currentPostIds.forEach(s -> {
                 State newState = new State();
                 newState.setPostId(s);
                 newState.setState(false);
-                existedState.add(newState);
+                states.add(newState);
             });
-            match.setEtat(existedState);
-            match.setMatchedPostIds(postId);
-
+            match.setEtat(states);
+            match.setMatchedPostIds(currentPostIds);
             match.setCreatedAt(LocalDateTime.now());
+
+            newPostIds = currentPostIds; // premier match → tout est nouveau
+        }
+
+        // ✅ Envoi de notif uniquement pour les nouveaux
+        if (!newPostIds.isEmpty()) {
+            sendNotifications(userId, newPostIds);
         }
 
         matchRepositories.save(match);
-
         return match;
     }
 
@@ -129,16 +131,14 @@ public class Search {
             String lieu, String userId) {
         int score = 0;
 
-        // 1. Catégorie
         if (category != null) {
             if (p.getCategory().toString().equalsIgnoreCase(category.toString())) {
                 score += 50;
             } else if (similarity(p.getCategory().toString(), category.toString()) > 0.7) {
-                score += 25; // match approximatif
+                score += 25;
             }
         }
 
-        // 2. Type
         if (keyword != null && !keyword.isEmpty()) {
             if (p.getType().equalsIgnoreCase(keyword)) {
                 score += 20;
@@ -147,7 +147,6 @@ public class Search {
             }
         }
 
-        // 3. Description
         if (p.getDescription() != null && keyword != null) {
             if (p.getDescription().contains(keyword)) {
                 score += 15;
@@ -156,14 +155,12 @@ public class Search {
             }
         }
 
-        // 4. Lieu
         if (p.getLieu() != null && lieu != null) {
             if (p.getLieu().toLowerCase().contains(lieu.toLowerCase())) {
                 score += 10;
             }
         }
 
-        // 5. Date
         if (p.getDate() != null && date != null) {
             if (p.getDate().toLowerCase().contains(date.toLowerCase())) {
                 score += 5;
@@ -173,16 +170,12 @@ public class Search {
         return score;
     }
 
-    /**
-     * Retourne un score entre 0 et 1 représentant la similarité entre deux chaînes.
-     */
     public static double similarity(String s1, String s2) {
         if (s1 == null || s2 == null)
             return 0.0;
         return jw.apply(s1.toLowerCase(), s2.toLowerCase());
     }
 
-    // Score pour un tableau de chaînes vs une chaîne
     public static double similarity2(List<String> array, String keyword) {
         if (array == null || keyword == null)
             return 0.0;
@@ -192,6 +185,6 @@ public class Search {
             if (score > maxScore)
                 maxScore = score;
         }
-        return maxScore; // ou retourner la moyenne si tu préfères
+        return maxScore;
     }
 }

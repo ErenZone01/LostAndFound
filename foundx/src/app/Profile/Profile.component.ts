@@ -24,6 +24,7 @@ export class ProfileComponent implements OnInit {
   user: UserResponse = { userId: null, name: null, email: null, role: null };
   newUser: UserUpdate = { name: null, email: null, password: null, role: null };
   showForm: boolean = false;
+  initial : string | undefined = "";
 
   openForm() {
     this.showForm = true;
@@ -60,12 +61,11 @@ export class ProfileComponent implements OnInit {
     this.profileService.DeleteUser().subscribe({
       next:(res)=>{
         console.log(res);
-        localStorage.removeItem("token");
-        this.router.navigate(["/login"]);
       },
       error:(err)=>{
-        console.log(err);
-        
+        localStorage.removeItem("token");
+        this.router.navigate(["/login"]);
+        console.log(err); 
       }
     })
   }
@@ -77,6 +77,7 @@ export class ProfileComponent implements OnInit {
         this.email = res.email;
         this.name = res.name;
         this.role = res.role;
+        this.initial = this.user.name?.charAt(0).toString();
         console.log(res);
         
       },

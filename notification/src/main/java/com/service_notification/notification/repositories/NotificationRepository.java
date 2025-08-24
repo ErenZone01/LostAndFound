@@ -7,5 +7,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import com.service_notification.notification.models.Notification;
 
 public interface NotificationRepository extends MongoRepository<Notification, String> {
-    List<Notification> findByUserIdAndReadFalse(String userId);
+    List<Notification> findByReceiverIdAndReadFalse(String receiverId);
 }

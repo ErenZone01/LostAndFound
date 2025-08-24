@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PostResponse } from '../shared/PostResponse';
 import { MatchServiceService } from '../core/matchService/matchService.service';
 import { CommonModule } from '@angular/common';
@@ -14,11 +14,17 @@ import { State } from '../shared/State';
 })
 export class AnnoncematchingComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private matchService: MatchServiceService) { }
+  constructor(private route: ActivatedRoute, private matchService: MatchServiceService, private router: Router) { }
   matchId: string = "";
   posts: PostResponse[] = new Array();
   match: MatchReponse = { id: "", userId: "", keyword: "", type: "", lieu: "", date: "", description: [], category: "", matchedPostIds: [], active: "", createdAt: "", lastMatchDate: "", etat: new Array() };
 
+
+  public OpenChat(post: PostResponse) {
+    this.matchId = this.route.snapshot.paramMap.get('id')!;
+    const receiver = post.userId;
+    this.router.navigate([`/chat/${this.matchId}/${post.postId}/${receiver}`])
+  }
 
   cancelMatch(index: number, postId: string) {
     this.matchId = this.route.snapshot.paramMap.get('id')!;
@@ -47,16 +53,15 @@ export class AnnoncematchingComponent implements OnInit {
 
     this.matchService.updateMatchState(matchId, state).subscribe({
       next: (res: string) => {
-
+        console.log(res);
       },
       error: (err) => {
         matchId = this.route.snapshot.paramMap.get('id')!;
+        this.getMatchById(matchId);
         console.log(err);
-
       }
     })
   }
-
 
   getMatchById(matchId: string) {
     this.matchService.getMatchById(matchId).subscribe({

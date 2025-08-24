@@ -1,56 +1,112 @@
-<div class="p-6 sm:ml-64 bg-gray-50 min-h-screen">
-  <br>
-  <br>
-  <br>
-  <h2 class="text-xl font-semibold text-gray-900 mb-4">📌 Mes Annonces : </h2>
-  <div *ngIf="posts.length === 0" class="text-gray-500">Aucune annonce publiée.</div>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let p of posts">
-      <div>
-        <a
-          class="flex flex-col items-center w-full h-full bg-white rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+<div class="p-4 sm:p-6 sm:ml-64 min-h-screen ">
+  <div class="pt-16 md:pt-20">
+    <!-- En-tête de page -->
+    <div class="mb-8">
+      <div class="flex items-center mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h1 class="text-2xl font-bold text-gray-800">Mes Annonces</h1>
+      </div>
+      <p class="text-gray-600">Gérez vos annonces d'objets perdus ou trouvés</p>
+    </div>
 
-          <!-- Image responsive -->
-          <img src="/cacher.png"
-            class="object-cover w-full max-h-60 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg rounded-t-lg"
-            alt="Post image">
+    <!-- Liste des annonces -->
+    <div *ngIf="posts.length === 0" class="bg-white rounded-2xl shadow-sm p-8 text-center">
+      <div class="max-w-md mx-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">Aucune annonce publiée</h3>
+        <p class="mt-2 text-gray-500">Vous n'avez pas encore créé d'annonces.</p>
+      </div>
+    </div>
 
-          <div
-            class="flex flex-col justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md leading-relaxed w-full">
-            <p class="mb-2 text-gray-800 dark:text-gray-200">
-              <span class="font-semibold text-blue-600">Type :</span> {{p.type}}
-            </p>
-            <p class="mb-2 text-gray-800 dark:text-gray-200">
-              <span class="font-semibold text-blue-600">Description :</span> {{p.description}}
-            </p>
-            <p class="mb-2 text-gray-800 dark:text-gray-200">
-              <span class="font-semibold text-blue-600">Date :</span> {{p.date}}
-            </p>
-            <p class="mb-2 text-gray-800 dark:text-gray-200">
-              <span class="font-semibold text-blue-600">Lieu :</span> {{p.lieu}}
-            </p>
-            <p class="mb-2 text-gray-800 dark:text-gray-200">
-              <span class="font-semibold text-blue-600">Catégorie :</span> {{p.category}}
-            </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div *ngFor="let p of posts"
+        class="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+        <!-- Image -->
+        <div class="relative">
+          <img src="/cacher.png" class="w-full h-48 object-cover" alt="Post image">
+          <div class="absolute top-4 left-4">
+            <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full">
+              {{ p.type }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Contenu -->
+        <div class="p-5">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 truncate">{{ p.category }}</h3>
+            <span class="text-xs text-gray-500">{{ p.date }}</span>
           </div>
 
-        </a>
-      </div>
-      <div *ngFor="let l of match.etat" class="mt-4 flex space-x-2 block">
-        <span *ngIf="l.state == false && l.postId == p.postId" disabled
-          class="text-center flex-1 bg-gray-600  text-white font-semibold py-2 px-4 rounded-lg transition">
-          En attente
-        </span>
+          <div class="space-y-3">
+            <div class="flex items-center text-sm text-gray-600">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-500" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {{ p.lieu }}
+            </div>
 
-        <button *ngIf="l.state == true && l.postId == p.postId"
-          class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-          Annuler
-        </button>
+            <div class="text-sm text-gray-600">
+              <p class="line-clamp-3">{{ p.description }}</p>
+            </div>
+          </div>
+        </div>
 
-        <button *ngIf="l.state == true && l.postId == p.postId"
-          class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-          Chat
-        </button>
+        <!-- Actions -->
+        <div *ngFor="let l of match.etat let i = index" class="px-5 pb-5">
+          <div class="flex space-x-2">
+            <span *ngIf="l.state == false && l.postId == p.postId"
+              class="flex-1 bg-gray-100 text-gray-800 font-medium py-2 px-4 rounded-lg text-center flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              En attente
+            </span>
+
+            <span *ngIf="!p.active && l.postId == p.postId"
+              class="flex-1 bg-gray-100 text-gray-800 font-medium py-2 px-4 rounded-lg text-center flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Validé
+            </span>
+
+            <button *ngIf="l.state == true && l.postId == p.postId && p.active" (click)="cancelMatch(i, l.postId)"
+              class="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Annuler
+            </button>
+
+            <button *ngIf="l.state == true && l.postId == p.postId" (click)="OpenChat(p)"
+              class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              Chat
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

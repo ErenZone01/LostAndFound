@@ -1,7 +1,5 @@
 package com.service_notification.notification.services;
 
-import java.time.LocalDateTime;
-
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -36,19 +34,20 @@ public class MatchEventListener {
         System.out.println("👤 Destinataire : " + match.getOwnerId() + " | Expéditeur : " + match.getSenderId());
 
         Notification notification = Notification.builder()
-                .userId(match.getOwnerId())
+                .receiverId(match.getOwnerId())
                 .senderId(match.getSenderId())
                 .message("Nouvelle correspondance pour votre post !")
                 .read(false)
-                .timestamp(LocalDateTime.now())
                 .build();
 
         notificationRepository.save(notification);
 
         System.out.println("💾 Notification enregistrée en BD : " + notification);
 
-        messagingTemplate.convertAndSend("/topic/notifications/" + match.getOwnerId(), notification);
-        System.out.println("📡 Notification envoyée sur WebSocket /topic/notifications/" + match.getOwnerId());
+        messagingTemplate.convertAndSendToUser(notification.getReceiverId(), "/notifications", notification);
+        messagingTemplate.convertAndSendToUser(notification.getSenderId(), "/notifications", notification);
+
+        System.out.println("📡 Notification envoyée sur WebSocket /notifications/" + match.getOwnerId());
     }
 
 }

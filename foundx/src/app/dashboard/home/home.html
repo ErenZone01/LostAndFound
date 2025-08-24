@@ -1,248 +1,389 @@
-<br>
-<br><br>
-<div class="p-6 sm:ml-64 bg-gray-50 min-h-screen">
-   <!-- Header -->
-   <div class="flex justify-between items-center bg-white shadow rounded-xl p-6 mb-6">
-      <div>
-         <h1 class="text-3xl font-bold text-gray-900">Bienvenue, <span class="text-blue-600">{{ user.name }}</span> 👋
-         </h1>
-         <p class="text-gray-500">Rôle : <b class="capitalize">{{ user.role }}</b></p>
+<div class="p-4 sm:p-6 sm:ml-64 min-h-screen">
+  <div class="pt-16 md:pt-20">
+    <!-- Header -->
+    <div class="bg-white rounded-2xl shadow-md p-6 mb-8">
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center">
+        <div class="mb-4 md:mb-0">
+          <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Bienvenue, <span class="text-indigo-600">{{ user.name
+              }}</span> 👋</h1>
+          <p class="text-gray-600 mt-1">Rôle : <span class="capitalize font-medium text-indigo-500">{{ user.role
+              }}</span></p>
+        </div>
+        <!-- Actions selon le rôle -->
+        <div class="flex space-x-3">
+          <button *ngIf="user.role === 'retrouveur'" (click)="openModal('post')"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Créer une annonce
+          </button>
+          <button *ngIf="user.role === 'proprietaire'" (click)="openModal('search')"
+            class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            Rechercher
+          </button>
+        </div>
       </div>
-      <!-- Actions selon le rôle -->
-      <div class="space-x-3">
-         <button *ngIf="user.role === 'retrouveur'" (click)="openModal('post')"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition">
-            + Create Post
-         </button>
-         <button *ngIf="user.role === 'proprietaire'" (click)="openModal('search')"
-            class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition">
-            🔍 Search
-         </button>
+    </div>
+
+    <!-- Section Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition">
+        <div class="flex items-center">
+          <div class="rounded-lg bg-indigo-100 p-3 mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Total des annonces</p>
+            <h2 class="text-2xl font-bold text-gray-800">{{ post.length }}</h2>
+          </div>
+        </div>
       </div>
-   </div>
+      <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition">
+        <div class="flex items-center">
+          <div class="rounded-lg bg-green-100 p-3 mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Total des matchs</p>
+            <h2 class="text-2xl font-bold text-gray-800">{{ matchs.length }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition">
+        <div class="flex items-center">
+          <div class="rounded-lg bg-blue-100 p-3 mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Dernière activité</p>
+            <h2 class="text-2xl font-bold text-gray-800">N/A</h2>
+          </div>
+        </div>
+      </div>
+    </div>
 
-   <!-- Modal Post -->
-   <div *ngIf="isModalPostOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-100">
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
-         <!-- Header -->
-         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Create Post</h2>
-            <button (click)="closeModal('post')"
-               class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">&times;</button>
-         </div>
+    <!-- Section Contenu Dynamique -->
+    <div *ngIf="user.role == 'retrouveur'">
+      <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+          </svg>
+          Mes Annonces
+        </h2>
+        <p class="text-gray-600 mt-1">Gérez vos annonces d'objets trouvés</p>
+      </div>
 
-         <!-- Form -->
-         <form (ngSubmit)="createPost()">
-            <!-- Type -->
-            <div class="mb-4">
-               <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
-               <input id="type" type="text" name="type" [(ngModel)]="modalPost.type"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-            </div>
+      <div *ngIf="post.length === 0" class="bg-white rounded-2xl shadow-sm p-8 text-center">
+        <div class="max-w-md mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+          <h3 class="mt-4 text-lg font-medium text-gray-900">Aucune annonce publiée</h3>
+          <p class="mt-2 text-gray-500">Vous n'avez pas encore créé d'annonces.</p>
+        </div>
+      </div>
 
-            <!-- Lieu -->
-            <div class="mb-4">
-               <label for="lieu" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lieu</label>
-               <input id="lieu" type="text" [(ngModel)]="modalPost.lieu" name="lieu"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-            </div>
-
-            <!-- Date -->
-            <div class="mb-4">
-               <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
-               <input id="date" type="date" [(ngModel)]="modalPost.date" name="date"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-            </div>
-
-            <!-- Category -->
-            <div class="mb-4">
-               <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
-               <select id="category" [(ngModel)]="modalPost.category" name="category"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                  <option *ngFor="let cat of global.categories" [value]="cat">{{ cat }}</option>
-               </select>
-            </div>
-
-
-            <!-- Description -->
-            <div class="mb-4">
-               <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
-
-               <div *ngFor="let word of modalPost.description; let i = index; trackBy: trackByIndex"
-                  class="flex items-center mb-2">
-                  <input type="text" (keydown.space)="$event.preventDefault()" [(ngModel)]="modalPost.description[i]"
-                     name="description{{i}}"
-                     class="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                     placeholder="Entrez un mot" />
-                  <button type="button" (click)="removeWord(i)" class="ml-2 text-red-500 font-bold">&times;</button>
-               </div>
-
-
-               <button type="button" (click)="addWord()"
-                  class="mt-2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                  + Ajouter un mot
-               </button>
-            </div>
-
-
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div *ngFor="let p of post"
+          class="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+          <a [routerLink]="['/match', p.postId]" class="block">
             <!-- Image -->
-            <div class="mb-4">
-               <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Image</label>
-               <input id="image" accept=".jpg,.jpeg,.png" type="file" (change)="onFileSelected($event)" name="image"
-                  class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400" />
+            <div class="relative">
+              <img class="w-full h-48 object-cover" [src]="p.imageBase64" alt="Post image">
+              <div class="absolute top-4 left-4">
+                <span class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full">
+                  {{ p.type }}
+                </span>
+              </div>
             </div>
 
-            <!-- Buttons -->
-            <div class="flex justify-end space-x-2 mt-6">
-               <button type="button" (click)="cancelModal('post')"
-                  class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500">
-                  Cancel
-               </button>
-               <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
-                  Create
-               </button>
+            <!-- Contenu -->
+            <div class="p-5">
+              <div class="flex justify-between items-start mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 truncate">{{ p.category }}</h3>
+                <span class="text-xs text-gray-500">{{ p.date }}</span>
+              </div>
+
+              <div class="space-y-3">
+                <div class="flex items-center text-sm text-gray-600">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-500" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {{ p.lieu }}
+                </div>
+
+                <div class="text-sm text-gray-600">
+                  <p class="line-clamp-2">{{ p.description }}</p>
+                </div>
+              </div>
             </div>
-         </form>
+          </a>
+        </div>
       </div>
-   </div>
+    </div>
 
-   <!-- Modal Search -->
-   <div *ngIf="isModalSearchOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-100">
+    <div *ngIf="user.role == 'proprietaire'">
+      <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+          Mes Matchs
+        </h2>
+        <p class="text-gray-600 mt-1">Retrouvez vos correspondances d'objets perdus</p>
+      </div>
+
+      <div *ngIf="matchs.length === 0" class="bg-white rounded-2xl shadow-sm p-8 text-center">
+        <div class="max-w-md mx-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 class="mt-4 text-lg font-medium text-gray-900">Aucun match trouvé</h3>
+          <p class="mt-2 text-gray-500">Vous n'avez pas encore de correspondances.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div *ngFor="let m of matchs" [routerLink]="['/annoncematching', m.id]"
+          class="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer">
+          <div class="p-6">
+            <!-- En-tête du match -->
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <div class="flex items-center">
+                  <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Match
+                    trouvé</span>
+                  <span class="ml-2 text-xs text-gray-500">Créé le {{ m.createdAt }}</span>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Dernière mise à jour : {{ m.lastMatchDate }}</p>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex items-center text-sm text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-500" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span class="font-medium">Catégorie:</span>
+                <span class="ml-1">{{ m.category }}</span>
+              </div>
+
+              <div class="flex items-center text-sm text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-500" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span class="font-medium">Lieu:</span>
+                <span class="ml-1">{{ m.lieu }}</span>
+              </div>
+
+              <div class="flex items-center text-sm text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-500" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="font-medium">Date:</span>
+                <span class="ml-1">{{ m.date }}</span>
+              </div>
+
+              <div class="flex items-center text-sm text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-indigo-500" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="font-medium">Mot recherché:</span>
+                <span class="ml-1 bg-gray-100 px-2 py-1 rounded-md">{{ m.keyword }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Post (inchangé) -->
+  <div *ngIf="isModalPostOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-100">
+    <!-- ... le contenu de votre modal post reste inchangé ... -->
+    <!-- Modal Post -->
+    <div *ngIf="isModalPostOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-100">
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
-         <!-- Header -->
-         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Search</h2>
-            <button (click)="closeModal('search')"
-               class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">&times;</button>
-         </div>
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Create Post</h2>
+          <button (click)="closeModal('post')"
+            class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">&times;</button>
+        </div>
 
-         <!-- Form -->
-         <form (ngSubmit)="search()">
-            <!-- Type -->
-            <div class="mb-4">
-               <label for="keyword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">keyword</label>
-               <input id="keyword" type="text" name="type" [(ngModel)]="match.keyword"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+        <!-- Form -->
+        <form (ngSubmit)="createPost()">
+          <!-- Type -->
+          <div class="mb-4">
+            <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
+            <input id="type" type="text" name="type" [(ngModel)]="modalPost.type"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          </div>
+
+          <!-- Lieu -->
+          <div class="mb-4">
+            <label for="lieu" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lieu</label>
+            <input id="lieu" type="text" [(ngModel)]="modalPost.lieu" name="lieu"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          </div>
+
+          <!-- Date -->
+          <div class="mb-4">
+            <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
+            <input id="date" type="date" [(ngModel)]="modalPost.date" name="date"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          </div>
+
+          <!-- Category -->
+          <div class="mb-4">
+            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+            <select id="category" [(ngModel)]="modalPost.category" name="category"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              <option *ngFor="let cat of global.categories" [value]="cat">{{ cat }}</option>
+            </select>
+          </div>
+
+
+          <!-- Description -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
+
+            <div *ngFor="let word of modalPost.description; let i = index; trackBy: trackByIndex"
+              class="flex items-center mb-2">
+              <input type="text" (keydown.space)="$event.preventDefault()" [(ngModel)]="modalPost.description[i]"
+                name="description{{i}}"
+                class="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                placeholder="Entrez un mot" />
+              <button type="button" (click)="removeWord(i)" class="ml-2 text-red-500 font-bold">&times;</button>
             </div>
 
-            <!-- Lieu -->
-            <div class="mb-4">
-               <label for="lieu" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lieu</label>
-               <input id="lieu" type="text" [(ngModel)]="match.lieu" name="lieu"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-            </div>
 
-            <!-- Date -->
-            <div class="mb-4">
-               <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
-               <input id="date" type="date" [(ngModel)]="match.date" name="date"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-            </div>
+            <button type="button" (click)="addWord()"
+              class="mt-2 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+              + Ajouter un mot
+            </button>
+          </div>
 
-            <!-- Category -->
-            <div class="mb-4">
-               <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
-               <select id="category" [(ngModel)]="match.category" name="category"
-                  class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                  <option *ngFor="let cat of global.categories" [value]="cat">{{ cat }}</option>
-               </select>
-            </div>
 
-            <!-- Buttons -->
-            <div class="flex justify-end space-x-2 mt-6">
-               <button type="button" (click)="cancelModal('search')"
-                  class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500">
-                  Cancel
-               </button>
-               <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
-                  Search
-               </button>
-            </div>
-         </form>
+          <!-- Image -->
+          <div class="mb-4">
+            <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Image</label>
+            <input id="image" accept=".jpg,.jpeg,.png" type="file" (change)="onFileSelected($event)" name="image"
+              class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400" />
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex justify-end space-x-2 mt-6">
+            <button type="button" (click)="cancelModal('post')"
+              class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500">
+              Cancel
+            </button>
+            <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+              Create
+            </button>
+          </div>
+        </form>
       </div>
-   </div>
+    </div>
+  </div>
 
+  <!-- Modal Search (inchangé) -->
+  <div *ngIf="isModalSearchOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-100">
+    <!-- Modal Search -->
+    <div *ngIf="isModalSearchOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-100">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Search</h2>
+          <button (click)="closeModal('search')"
+            class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">&times;</button>
+        </div>
 
+        <!-- Form -->
+        <form (ngSubmit)="search()">
+          <!-- Type -->
+          <div class="mb-4">
+            <label for="keyword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">keyword</label>
+            <input id="keyword" type="text" name="type" [(ngModel)]="match.keyword"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          </div>
 
-   <!-- Section Stats -->
-   <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
-         <p class="text-gray-500">Total Posts</p>
-         <h2 class="text-2xl font-bold">{{ post.length }}</h2>
+          <!-- Lieu -->
+          <div class="mb-4">
+            <label for="lieu" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Lieu</label>
+            <input id="lieu" type="text" [(ngModel)]="match.lieu" name="lieu"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          </div>
+
+          <!-- Date -->
+          <div class="mb-4">
+            <label for="date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
+            <input id="date" type="date" [(ngModel)]="match.date" name="date"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
+          </div>
+
+          <!-- Category -->
+          <div class="mb-4">
+            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+            <select id="category" [(ngModel)]="match.category" name="category"
+              class="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+              <option *ngFor="let cat of global.categories" [value]="cat">{{ cat }}</option>
+            </select>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex justify-end space-x-2 mt-6">
+            <button type="button" (click)="cancelModal('search')"
+              class="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500">
+              Cancel
+            </button>
+            <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+              Search
+            </button>
+          </div>
+        </form>
       </div>
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
-         <p class="text-gray-500">Total Matchs</p>
-         <h2 class="text-2xl font-bold">{{ matchs.length }}</h2>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow hover:shadow-md transition">
-         <p class="text-gray-500">Last Active</p>
-         <h2 class="text-2xl font-bold">'N/A'</h2>
-      </div>
-   </div>
-
-   <!-- Section Contenu Dynamique -->
-   <div *ngIf="user.role == 'retrouveur'">
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">📌 Mes Annonces</h2>
-
-      <div *ngIf="post.length === 0" class="text-gray-500">Aucune annonce publiée.</div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-         <div *ngFor="let p of post">
-            <a [routerLink]="['/match', p.postId]"
-               class="flex flex-col items-center w-full h-full bg-white rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-
-               <!-- Image responsive -->
-               <img class="object-cover w-full max-h-60 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg rounded-t-lg"
-                  [src]="p.imageBase64" alt="Post image">
-
-               <div
-                  class="flex flex-col justify-between p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md leading-relaxed w-full">
-                  <p class="mb-2 text-gray-800 dark:text-gray-200">
-                     <span class="font-semibold text-blue-600">Type :</span> {{p.type}}
-                  </p>
-                  <p class="mb-2 text-gray-800 dark:text-gray-200">
-                     <span class="font-semibold text-blue-600">Description :</span> {{p.description}}
-                  </p>
-                  <p class="mb-2 text-gray-800 dark:text-gray-200">
-                     <span class="font-semibold text-blue-600">Date :</span> {{p.date}}
-                  </p>
-                  <p class="mb-2 text-gray-800 dark:text-gray-200">
-                     <span class="font-semibold text-blue-600">Lieu :</span> {{p.lieu}}
-                  </p>
-                  <p class="mb-2 text-gray-800 dark:text-gray-200">
-                     <span class="font-semibold text-blue-600">Catégorie :</span> {{p.category}}
-                  </p>
-               </div>
-
-            </a>
-         </div>
-      </div>
-
-   </div>
-
-   <div *ngIf="user.role == 'proprietaire'">
-      <h2 class="text-xl font-semibold text-gray-900 mb-4">🔎 Mes Matchs</h2>
-
-      <div *ngIf="matchs.length === 0" class="text-gray-500">Aucun match trouvé.</div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-         <div *ngFor="let m of matchs" [routerLink]="['/annoncematching', m.id]" class="bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition p-6 flex">
-            <div class="flex-1 pr-4">
-               <!-- Header du match -->
-               <div class="mb-4">
-                  <h3 class="text-lg font-semibold text-white">🎯 Match trouvé</h3>
-                  <p class="text-xs text-gray-400">Créé le {{ m.createdAt }}</p>
-                  <p class="text-xs text-gray-400">Dernière mise à jour : {{ m.lastMatchDate }}</p>
-               </div>
-
-               <div class="space-y-2 text-sm text-gray-300">
-                  <p><span class="font-semibold">📌 Catégorie:</span> {{ m.category }}</p>
-                  <p><span class="font-semibold">📍 Lieu:</span> {{ m.lieu }}</p>
-                  <p><span class="font-semibold">📅 Date:</span> {{ m.date }}</p>
-                  <p><span class="font-semibold">🔑 Mot recherché:</span> {{ m.keyword }}</p>
-               </div>
-            </div>
-         </div>
-      </div>
-   </div>
+    </div>
+  </div>
 </div>

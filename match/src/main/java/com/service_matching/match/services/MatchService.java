@@ -52,10 +52,8 @@ public class MatchService {
         return matchRepositories.findById(matchId).get();
     }
 
-
-
-    //41ed742d-650c-4536-b8b7-fb7fd35b3555
-    //41ed742d-650c-4536-b8b7-fb7fd35b3555
+    // 41ed742d-650c-4536-b8b7-fb7fd35b3555
+    // 41ed742d-650c-4536-b8b7-fb7fd35b3555
 
     public String changeState(String matchId, State state) {
         if (!matchRepositories.findById(matchId).isPresent()) {
@@ -63,17 +61,30 @@ public class MatchService {
         }
         Match match = matchRepositories.findById(matchId).get();
         List<State> existedState = match.getEtat();
-        existedState.forEach((s)->{
-            System.out.println("tout les state existant : "+ existedState);
-            if (state.getPostId().equals(s.getPostId())){
-                System.out.println("l'update se passe ici et le stte est à : "+ state.isState());
+        existedState.forEach((s) -> {
+            System.out.println("tout les state existant : " + existedState);
+            if (state.getPostId().equals(s.getPostId())) {
+                System.out.println("l'update se passe ici et le stte est à : " + state.isState());
                 s.setState(state.isState());
             }
         });
         match.setEtat(existedState);
-        
+
         // match.setEtat(match.getEtat());
         matchRepositories.save(match);
+        return "Update successfull";
+    }
+
+    public String changeActive(String matchId, String postId) {
+        if (!matchRepositories.findById(matchId).isPresent() || postRepositories.findByPostId(postId) == null) {
+            return "Update error";
+        }
+        Match match = matchRepositories.findById(matchId).get();
+        Post post = postRepositories.findByPostId(postId);
+        match.setActive(true);
+        post.setActive(false);
+        matchRepositories.save(match);
+        postRepositories.save(post);
         return "Update successfull";
     }
 
